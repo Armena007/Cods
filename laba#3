@@ -1,0 +1,140 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+
+
+void save_product(const std::string& name, const std::string& price, const std::string& quantity) {
+    std::ofstream file("products.txt", std::ios_base::app);
+    if (file.is_open()) {
+        file << name << "," << price << "," << quantity << "\n";
+        file.close();
+    }
+    else {
+        std::cout << "Ошибка открытия файла" << std::endl;
+    }
+}
+
+
+
+void find_product(const std::string& name) {
+    std::ifstream file("products.txt");
+    std::string line;
+    bool found = false;
+    if (file.is_open()) {
+        while (std::getline(file, line)) {
+            std::string productName = line.substr(0, line.find(','));
+            if (productName == name) {
+                std::cout << "Найден продукт: " << line << std::endl;
+                found = true;
+                break;
+            }
+        }
+        file.close();
+        if(!found) {
+            std::cout << "Продукт не найден" << std::endl;
+        }
+    } else {
+        std::cout << "Ошибка открытия файла" << std::endl;
+    }
+}
+
+
+
+void sort_by_price() {
+    std::ifstream file("products.txt");
+    std::vector<std::string> products;
+    if (file.is_open()) {
+        std::string line;
+        while (std::getline(file, line)) {
+            products.push_back(line);
+        }
+        file.close();
+        std::sort(products.begin(), products.end(), [](const std::string& a, const std::string& b) {
+            return std::stof(a.substr(a.find(',') + 1)) < std::stof(b.substr(b.find(',') + 1));
+            });
+        std::ofstream outFile("output.txt");
+        for (const auto& product : products) {
+            outFile << product << "\n";
+        }
+        outFile.close();
+    }
+    else {
+        std::cout << "Ошибка открытия файла" << std::endl;
+    }
+}
+
+
+
+void sort_by_quantity() {
+    std::ifstream file("products.txt");
+    std::vector<std::string> products;
+    if (file.is_open()) {
+        std::string line;
+        while (std::getline(file, line)) {
+            products.push_back(line);
+        }
+        file.close();
+        std::sort(products.begin(), products.end(), [](const std::string& a, const std::string& b) {
+            return std::stoi(a.substr(a.rfind(',') + 1)) < std::stoi(b.substr(b.rfind(',') + 1));
+            });
+        std::ofstream outFile("output.txt");
+        for (const auto& product : products) {
+            outFile << product << "\n";
+        }
+        outFile.close();
+    }
+    else {
+        std::cout << "Ошибка открытия файла" << std::endl;
+    }
+}
+
+int main() {
+    int choice;
+    std::string name, price, quantity;
+
+    do {
+        std::cout << "1. Добавить продукт\n";
+        std::cout << "2. Найти продукт\n";
+        std::cout << "3. Сортировка по цене\n";
+        std::cout << "4. Сортировка по количеству\n";
+        std::cout << "5. Выход\n";
+        std::cout << "Выберите действие: ";
+        std::cin >> choice;
+
+        switch (choice) {
+        case 1:
+            std::cout << "Введите название продукта: ";
+            std::cin >> name;
+            std::cout << "Введите цену продукта: ";
+            std::cin >> price;
+            std::cout << "Введите количество продукта: ";
+            std::cin >> quantity;
+            save_product(name, price, quantity);
+            break;
+        case 2:
+            std::cout << "Введите название продукта для поиска: ";
+            std::cin >> name;
+            find_product(name);
+            break;
+        case 3:
+            sort_by_price();
+            std::cout << "Продукты отсортированы по цене. Результат сохранен в output.txt\n";
+            break;
+        case 4:
+            sort_by_quantity();
+            std::cout << "Продукты отсортированы по количеству. Результат сохранен в
+                output.txt\n";
+                break;
+        case 5:
+            std::cout << "Выход из программы\n";
+            break;
+        default:
+            std::cout << "Некорректный выбор\n";
+        }
+    } while (choice != 5);
+
+    return 0;
+}
