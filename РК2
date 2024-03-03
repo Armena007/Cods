@@ -1,0 +1,70 @@
+#include <iostream>
+#include <list>
+#include <string>
+
+class Vehicle {
+protected:
+    std::string brand;
+    std::string model;
+
+public:
+    Vehicle(const std::string& brand, const std::string& model) : brand(brand), model(model) {}
+
+    virtual void display() const {
+        std::cout << "Марка: " << brand << ", Модель: " << model << std::endl;
+    }
+};
+
+class Car : public Vehicle {
+private:
+    int numDoors;
+
+public:
+    Car(const std::string& brand, const std::string& model, int numDoors) : Vehicle(brand, model), numDoors(numDoors) {}
+
+    void display() const override {
+        Vehicle::display();
+        std::cout << "Количество дверей: " << numDoors << std::endl;
+    }
+};
+
+class Motorcycle : public Vehicle {
+private:
+    std::string type;
+
+public:
+    Motorcycle(const std::string& brand, const std::string& model, const std::string& type) : Vehicle(brand, model), type(type) {}
+
+    void display() const override {
+        Vehicle::display();
+        std::cout << "Тип: " << type << std::endl;
+    }
+};
+
+void modifyVehicle(Vehicle* vehicle) {
+    // Изменение характеристик транспортного средства
+    // Здесь можно добавить нужную логику для изменений
+}
+
+int main() {
+    std::list<Vehicle*> vehicles;
+    vehicles.push_back(new Car("BMW", "X5", 4));
+    vehicles.push_back(new Car("Mercedes", "E-Class", 4));
+    vehicles.push_back(new Motorcycle("Harley-Davidson", "Sportster", "спортивный"));
+    vehicles.push_back(new Motorcycle("Honda", "CBR1000RR", "спортивный"));
+
+    // Вывод информации о каждом транспортном средстве
+    for (const auto& vehicle : vehicles) {
+        vehicle->display();
+    }
+
+    // Пример использования функции для изменения характеристик транспортного средства
+    Vehicle* vehicle = new Car("Toyota", "Camry", 4);
+    modifyVehicle(vehicle);
+    
+    for (auto& v : vehicles) {
+        delete v; // Очистка памяти
+    }
+
+    return 0;
+}
